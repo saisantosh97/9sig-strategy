@@ -502,7 +502,7 @@ def main():
 
     html = build_html(results, config)
 
-    report_path = Path(results_file).with_suffix(".html")
+    report_path = Path("index.html")
     with open(report_path, "w") as f:
         f.write(html)
 

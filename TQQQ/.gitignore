@@ -1,5 +1,8 @@
 # Generated outputs
+results.csv
+results.png
 
+# Keep index.html for GitHub Pages (do not ignore)
 
 # Python
 __pycache__/
