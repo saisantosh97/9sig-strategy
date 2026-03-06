@@ -1,0 +1,13 @@
+# Generated outputs
+results.csv
+results.html
+results.png
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# macOS
+.DS_Store

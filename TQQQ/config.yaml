@@ -1,0 +1,21 @@
+# --- Data ---
+data_file: TQQQ.csv
+start_date: 2016-01-01   # e.g. "2015-01-01", or null to use all data
+end_date: null     # e.g. "2024-12-31", or null to use all data
+
+# --- Portfolio ---
+starting_capital: 5000
+initial_etf_allocation: 0.60   # 60% ETF, 40% cash
+
+# --- Strategy ---
+quarterly_growth_target: 0.09       # 9%  – buy/sell target per quarter
+thirty_down_threshold: 0.30         # 30% – drop from 2-yr high triggers rule
+thirty_down_lookback_quarters: 8    # 8 quarters = 2 years
+thirty_down_ignore_signals: 2       # ignore this many sell signals after trigger
+hundred_up_threshold: 1.00          # 100% single-quarter gain triggers full rebalance
+
+# --- Output ---
+output_file: results.csv
+print_quarterly: true               # print quarter-by-quarter table to console
+save_charts: true                   # save chart images to disk
+show_charts: false                  # display charts in a window (requires display)
