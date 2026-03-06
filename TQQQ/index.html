@@ -114,6 +114,179 @@
     }
 
     footer { text-align: center; color: #94a3b8; font-size: 0.8rem; margin-top: 40px; }
+
+    /* ── Calculator ─────────────────────────────────────────── */
+    .calc-section { margin-bottom: 32px; }
+    .calc-intro {
+      background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+      border: 1px solid #bfdbfe; border-radius: 12px;
+      padding: 20px 24px; margin-bottom: 20px;
+      font-size: 0.92rem; color: #1e40af;
+    }
+    .calc-intro strong { color: #1d4ed8; }
+    .calc-steps {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px; margin-top: 14px;
+    }
+    .calc-step {
+      background: white; border-radius: 10px; padding: 14px 16px;
+      border: 1px solid #dbeafe; display: flex; align-items: flex-start; gap: 12px;
+    }
+    .calc-step .step-num {
+      background: #2563eb; color: white; border-radius: 50%;
+      width: 26px; height: 26px; display: flex; align-items: center;
+      justify-content: center; font-size: 0.8rem; font-weight: 700; flex-shrink: 0;
+    }
+    .calc-step .step-txt { font-size: 0.85rem; color: #374151; }
+    .calc-step .step-txt strong { color: #111827; }
+
+    .form-section { margin-bottom: 22px; }
+    .form-section-title {
+      font-size: 0.8rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.06em; color: #64748b; margin-bottom: 12px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .form-section-title::after {
+      content: ''; flex: 1; height: 1px; background: #e2e8f0;
+    }
+    .form-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+    .form-field { display: flex; flex-direction: column; gap: 5px; }
+    .form-field label {
+      font-size: 0.88rem; font-weight: 600; color: #374151;
+    }
+    .form-field .hint {
+      font-size: 0.78rem; color: #6b7280; line-height: 1.4;
+    }
+    .form-field input[type="number"], .form-field select {
+      padding: 10px 12px; border: 1.5px solid #d1d5db;
+      border-radius: 8px; font-size: 0.95rem; color: #111827;
+      transition: border-color 0.15s;
+      background: white;
+      -moz-appearance: textfield;
+    }
+    .form-field input[type="number"]::-webkit-outer-spin-button,
+    .form-field input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+    .form-field input[type="number"]:focus, .form-field select:focus {
+      outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+    .form-field input.error { border-color: #ef4444; }
+    .field-prefix-wrap { position: relative; }
+    .field-prefix-wrap .prefix {
+      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+      color: #6b7280; font-size: 0.95rem; pointer-events: none;
+    }
+    .field-prefix-wrap input { padding-left: 22px; }
+
+    .toggle-row {
+      display: flex; align-items: center; gap: 14px; margin-top: 4px;
+    }
+    .toggle-label {
+      font-size: 0.88rem; font-weight: 600; color: #374151;
+    }
+    .toggle-switch { position: relative; display: inline-block; width: 46px; height: 26px; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; cursor: pointer; inset: 0;
+      background: #d1d5db; border-radius: 26px; transition: background 0.2s;
+    }
+    .toggle-slider::before {
+      content: ''; position: absolute; height: 20px; width: 20px;
+      left: 3px; top: 3px; background: white; border-radius: 50%;
+      transition: transform 0.2s;
+    }
+    .toggle-switch input:checked + .toggle-slider { background: #2563eb; }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(20px); }
+
+    .calc-btn {
+      width: 100%; padding: 14px; background: #2563eb; color: white;
+      border: none; border-radius: 10px; font-size: 1rem; font-weight: 700;
+      cursor: pointer; transition: background 0.15s, transform 0.1s;
+      margin-top: 8px;
+    }
+    .calc-btn:hover { background: #1d4ed8; }
+    .calc-btn:active { transform: scale(0.98); }
+
+    /* Result card */
+    .calc-result { display: none; margin-top: 24px; border-radius: 14px; overflow: hidden; }
+    .calc-result.show { display: block; }
+    .result-header {
+      padding: 20px 24px 16px; display: flex; align-items: center;
+      justify-content: space-between; flex-wrap: wrap; gap: 12px;
+    }
+    .result-header.buy    { background: #16a34a; color: white; }
+    .result-header.sell   { background: #dc2626; color: white; }
+    .result-header.hold   { background: #64748b; color: white; }
+    .result-header.rebal  { background: #7c3aed; color: white; }
+    .result-header.down   { background: #ea580c; color: white; }
+    .result-header .action-label { font-size: 1.6rem; font-weight: 800; }
+    .result-header .action-sub   { font-size: 0.9rem; opacity: 0.9; margin-top: 2px; }
+    .result-header .trade-badge {
+      background: rgba(255,255,255,0.25); border-radius: 10px;
+      padding: 10px 18px; text-align: center;
+    }
+    .result-header .trade-badge .trade-lbl { font-size: 0.75rem; opacity: 0.85; }
+    .result-header .trade-badge .trade-val { font-size: 1.3rem; font-weight: 800; }
+
+    .result-body { background: white; padding: 20px 24px; }
+    .result-explain {
+      background: #f8fafc; border-radius: 8px; padding: 14px 16px;
+      font-size: 0.9rem; color: #334155; margin-bottom: 18px; line-height: 1.6;
+    }
+    .result-nextsteps {
+      background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px;
+      padding: 14px 16px; margin-bottom: 18px;
+    }
+    .result-nextsteps .ns-title {
+      font-size: 0.82rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.05em; color: #15803d; margin-bottom: 10px;
+    }
+    .result-nextsteps ol {
+      padding-left: 18px; font-size: 0.88rem; color: #166534; line-height: 2;
+    }
+    .result-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px; margin-bottom: 16px;
+    }
+    .result-box {
+      background: #f8fafc; border-radius: 8px; padding: 12px 14px; text-align: center;
+    }
+    .result-box .rb-lbl { font-size: 0.75rem; color: #64748b; text-transform: uppercase;
+                           letter-spacing: 0.04em; margin-bottom: 4px; }
+    .result-box .rb-val { font-size: 1.1rem; font-weight: 700; color: #0f172a; }
+    .result-state {
+      background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px;
+      padding: 12px 16px; font-size: 0.85rem; color: #9a3412;
+    }
+    .result-state strong { color: #7c2d12; }
+    .result-warn {
+      background: #fef3c7; border: 1px solid #fde68a; border-radius: 8px;
+      padding: 10px 14px; font-size: 0.82rem; color: #92400e; margin-top: 12px;
+    }
+    .method-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+    .method-tab {
+      padding: 8px 16px; border-radius: 8px; border: 1.5px solid #d1d5db;
+      background: white; font-size: 0.85rem; font-weight: 600; cursor: pointer;
+      color: #6b7280; transition: all 0.15s;
+    }
+    .method-tab.active { background: #2563eb; border-color: #2563eb; color: white; }
+    .method-panel { display: none; }
+    .method-panel.active { display: block; }
+    .tooltip-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 16px; height: 16px; background: #94a3b8; color: white;
+      border-radius: 50%; font-size: 0.65rem; font-weight: 700; cursor: help;
+      vertical-align: middle; margin-left: 4px; position: relative;
+    }
+    .tooltip-icon:hover::after {
+      content: attr(data-tip);
+      position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
+      background: #1e293b; color: white; border-radius: 6px; padding: 6px 10px;
+      font-size: 0.75rem; line-height: 1.4; white-space: nowrap; z-index: 10;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2); pointer-events: none; font-weight: 400;
+    }
   </style>
 </head>
 <body>
@@ -665,6 +838,531 @@
       </table>
     </div>
   </div>
+
+  <!-- ── Quarter-End Calculator ───────────────────────────── -->
+  <div class="calc-section">
+    <h2>Quarter-End Decision Calculator</h2>
+
+    <div class="calc-intro">
+      <strong>Not sure what to do this quarter?</strong> Enter your current numbers below and the
+      calculator will tell you exactly what action to take — BUY, SELL, or something else —
+      based on the 9sig rules. No maths required.
+      <div class="calc-steps">
+        <div class="calc-step">
+          <div class="step-num">1</div>
+          <div class="step-txt"><strong>Open your brokerage account</strong> — you'll need your current TQQQ value and cash balance.</div>
+        </div>
+        <div class="calc-step">
+          <div class="step-num">2</div>
+          <div class="step-txt"><strong>Fill in the numbers</strong> below. Every field has a tip to help you find it.</div>
+        </div>
+        <div class="calc-step">
+          <div class="step-num">3</div>
+          <div class="step-txt"><strong>Hit Calculate</strong> and get your action with a plain-English explanation.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:0;">
+
+      <!-- ── Step 1: Portfolio values ── -->
+      <div class="form-section">
+        <div class="form-section-title">Step 1 — Your portfolio values</div>
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="prevEtf">
+              TQQQ value at the <em>start</em> of this quarter
+              <span class="tooltip-icon" data-tip="The dollar value of your TQQQ position on the first day of this quarter (3 months ago).">?</span>
+            </label>
+            <div class="field-prefix-wrap">
+              <span class="prefix">$</span>
+              <input type="number" id="prevEtf" placeholder="e.g. 6000" min="0" step="any"/>
+            </div>
+            <span class="hint">Check your brokerage statement from 3 months ago.</span>
+          </div>
+          <div class="form-field">
+            <label for="currentEtf">
+              TQQQ value <em>right now</em> (end of quarter)
+              <span class="tooltip-icon" data-tip="The current market value of all TQQQ shares you hold today.">?</span>
+            </label>
+            <div class="field-prefix-wrap">
+              <span class="prefix">$</span>
+              <input type="number" id="currentEtf" placeholder="e.g. 5800" min="0" step="any"/>
+            </div>
+            <span class="hint">Log in to your brokerage — it's shown as "Market Value".</span>
+          </div>
+          <div class="form-field">
+            <label for="cashBalance">
+              Your cash balance
+              <span class="tooltip-icon" data-tip="The uninvested cash sitting alongside your TQQQ in the same account.">?</span>
+            </label>
+            <div class="field-prefix-wrap">
+              <span class="prefix">$</span>
+              <input type="number" id="cashBalance" placeholder="e.g. 3000" min="0" step="any"/>
+            </div>
+            <span class="hint">The cash / money market balance in the same account.</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Step 2: Price info ── -->
+      <div class="form-section">
+        <div class="form-section-title">Step 2 — Price information</div>
+        <p style="font-size:0.85rem;color:#6b7280;margin-bottom:12px;">
+          Choose how you want to enter price data. <strong>Option A is recommended</strong> — it lets the calculator check all rules automatically.
+        </p>
+        <div class="method-tabs">
+          <button class="method-tab active" onclick="switchMethod('A')">Option A — Enter prices (recommended)</button>
+          <button class="method-tab" onclick="switchMethod('B')">Option B — Enter % directly</button>
+        </div>
+
+        <!-- Option A: raw prices -->
+        <div class="method-panel active" id="panelA">
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="currentPrice">
+                TQQQ price today
+                <span class="tooltip-icon" data-tip="The current share price of TQQQ. Search 'TQQQ price' on Google.">?</span>
+              </label>
+              <div class="field-prefix-wrap">
+                <span class="prefix">$</span>
+                <input type="number" id="currentPrice" placeholder="e.g. 52.40" min="0" step="any"/>
+              </div>
+              <span class="hint">Search "TQQQ price" on Google or your brokerage app.</span>
+            </div>
+            <div class="form-field">
+              <label for="prevPrice">
+                TQQQ price at the <em>start</em> of this quarter
+                <span class="tooltip-icon" data-tip="The TQQQ share price exactly 3 months ago (last quarter-end closing price).">?</span>
+              </label>
+              <div class="field-prefix-wrap">
+                <span class="prefix">$</span>
+                <input type="number" id="prevPrice" placeholder="e.g. 48.20" min="0" step="any"/>
+              </div>
+              <span class="hint">Look up TQQQ historical prices on finance.yahoo.com — pick the close price from ~3 months ago.</span>
+            </div>
+            <div class="form-field">
+              <label for="twoYrHigh">
+                Highest TQQQ price in the last 2 years
+                <span class="tooltip-icon" data-tip="The highest closing price TQQQ reached over the past 8 quarters (2 years). Used to check the 30-Down crash rule.">?</span>
+              </label>
+              <div class="field-prefix-wrap">
+                <span class="prefix">$</span>
+                <input type="number" id="twoYrHigh" placeholder="e.g. 78.00" min="0" step="any"/>
+              </div>
+              <span class="hint">On Yahoo Finance, open the TQQQ chart, set range to "2Y", and note the peak price.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Option B: direct % -->
+        <div class="method-panel" id="panelB">
+          <div class="form-grid">
+            <div class="form-field">
+              <label for="growthPct">
+                Quarterly growth (%)
+                <span class="tooltip-icon" data-tip="How much did TQQQ's price change this quarter? e.g. +12.5 means it went up 12.5%, -8 means it fell 8%.">?</span>
+              </label>
+              <input type="number" id="growthPct" placeholder="e.g. 12.5 or -8.0" step="any"/>
+              <span class="hint">Positive = price went up. Negative = price went down. Enter as a number like <strong>12.5</strong> (not 0.125).</span>
+            </div>
+            <div class="form-field" style="justify-content:center;">
+              <label>Is the 30-Down rule triggered?</label>
+              <div class="toggle-row" style="margin-top:8px;">
+                <label class="toggle-switch">
+                  <input type="checkbox" id="thirtyDownTriggered"/>
+                  <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label" id="thirtyDownTriggeredLabel">No</span>
+              </div>
+              <span class="hint" style="margin-top:6px;">
+                The 30-Down rule triggers when TQQQ's current price is 30% or more below its 2-year high.
+                Use Option A above to calculate this automatically.
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Step 3: 30-Down state ── -->
+      <div class="form-section">
+        <div class="form-section-title">Step 3 — 30-Down rule status</div>
+        <p style="font-size:0.85rem;color:#6b7280;margin-bottom:14px;">
+          The 30-Down rule is a special crash-protection mode. If you're just starting out, the answer is almost certainly <strong>No</strong>.
+        </p>
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <div>
+            <div class="toggle-row">
+              <label class="toggle-switch">
+                <input type="checkbox" id="thirtyDownActive" onchange="onThirtyDownToggle()"/>
+                <span class="toggle-slider"></span>
+              </label>
+              <span class="toggle-label" id="thirtyDownActiveLabel">30-Down rule is <strong>NOT</strong> currently active</span>
+            </div>
+            <span class="hint" style="display:block;margin-top:6px;padding-left:60px;">
+              The 30-Down rule activates when TQQQ drops 30%+ from its 2-year high. You'll know from last quarter's result.
+            </span>
+          </div>
+          <div id="ignoredSignalsRow" style="display:none;">
+            <div class="form-field" style="max-width:320px;">
+              <label for="sellSignalsIgnored">
+                How many sell signals have been ignored so far?
+                <span class="tooltip-icon" data-tip="While 30-Down is active, the strategy ignores sell signals. This counts how many have been ignored already in the current 30-Down period.">?</span>
+              </label>
+              <select id="sellSignalsIgnored">
+                <option value="0">0 — No sell signals ignored yet</option>
+                <option value="1">1 — One sell signal ignored already</option>
+              </select>
+              <span class="hint">This was shown in the result from last quarter's calculation.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error box -->
+      <div id="calcError" style="display:none;background:#fef2f2;border:1px solid #fca5a5;border-radius:8px;padding:12px 16px;font-size:0.88rem;color:#991b1b;margin-bottom:16px;"></div>
+
+      <!-- Calculate button -->
+      <button class="calc-btn" onclick="calculate9sig()">&#9654;&nbsp; Calculate My Action</button>
+
+      <!-- Result -->
+      <div class="calc-result" id="calcResult">
+        <div class="result-header" id="resultHeader">
+          <div>
+            <div class="action-label" id="resultActionLabel"></div>
+            <div class="action-sub"  id="resultActionSub"></div>
+          </div>
+          <div class="trade-badge">
+            <div class="trade-lbl">Trade amount</div>
+            <div class="trade-val" id="resultTradeVal"></div>
+          </div>
+        </div>
+        <div class="result-body">
+          <div class="result-explain" id="resultExplain"></div>
+          <div class="result-nextsteps" id="resultNextSteps">
+            <div class="ns-title">&#10003; What to do now</div>
+            <ol id="resultStepsList"></ol>
+          </div>
+          <div class="form-section-title" style="margin-bottom:12px;">Your portfolio after this trade</div>
+          <div class="result-grid">
+            <div class="result-box">
+              <div class="rb-lbl">TQQQ Value</div>
+              <div class="rb-val" id="rbEtf"></div>
+            </div>
+            <div class="result-box">
+              <div class="rb-lbl">Cash</div>
+              <div class="rb-val" id="rbCash"></div>
+            </div>
+            <div class="result-box">
+              <div class="rb-lbl">Total Portfolio</div>
+              <div class="rb-val" id="rbTotal"></div>
+            </div>
+            <div class="result-box">
+              <div class="rb-lbl">TQQQ Allocation</div>
+              <div class="rb-val" id="rbAlloc"></div>
+            </div>
+          </div>
+          <div class="result-state">
+            <strong>Save this for next quarter —</strong>
+            30-Down rule active after this trade: <strong id="rbThirtyDown"></strong> &nbsp;|&nbsp;
+            Sell signals ignored: <strong id="rbIgnored"></strong>
+          </div>
+          <div class="result-warn" id="rbCashWarn" style="display:none;"></div>
+        </div>
+      </div>
+
+    </div><!-- /card -->
+  </div><!-- /calc-section -->
+
+  <script>
+  // ── Strategy parameters (must match config.yaml) ───────────
+  const Q_TARGET      = 0.09;
+  const IGNORE_COUNT  = 2;
+  const INITIAL_ALLOC = 0.60;
+  const HUNDRED_UP    = 1.00;
+  const THIRTY_DOWN   = 0.30;
+
+  // ── UI helpers ──────────────────────────────────────────────
+  function switchMethod(m) {
+    document.querySelectorAll('.method-tab').forEach((t, i) =>
+      t.classList.toggle('active', (i === 0) === (m === 'A'))
+    );
+    document.getElementById('panelA').classList.toggle('active', m === 'A');
+    document.getElementById('panelB').classList.toggle('active', m === 'B');
+  }
+
+  function onThirtyDownToggle() {
+    const active = document.getElementById('thirtyDownActive').checked;
+    document.getElementById('ignoredSignalsRow').style.display = active ? 'block' : 'none';
+    document.getElementById('thirtyDownActiveLabel').innerHTML = active
+      ? '30-Down rule is <strong>ACTIVE</strong>'
+      : '30-Down rule is <strong>NOT</strong> currently active';
+  }
+
+  document.getElementById('thirtyDownTriggered').addEventListener('change', function () {
+    document.getElementById('thirtyDownTriggeredLabel').textContent = this.checked ? 'Yes' : 'No';
+  });
+
+  function fmt(n) {
+    return '$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  function fmtSigned(n) {
+    return (n >= 0 ? '+' : '−') + fmt(n);
+  }
+  function pct(n) {
+    return (n >= 0 ? '+' : '') + (n * 100).toFixed(2) + '%';
+  }
+
+  // ── Validation ──────────────────────────────────────────────
+  function showError(msg) {
+    const el = document.getElementById('calcError');
+    el.textContent = '⚠ ' + msg;
+    el.style.display = 'block';
+    document.getElementById('calcResult').classList.remove('show');
+  }
+  function clearError() {
+    document.getElementById('calcError').style.display = 'none';
+  }
+
+  // ── Main calculator ─────────────────────────────────────────
+  function calculate9sig() {
+    clearError();
+
+    const prevEtf    = parseFloat(document.getElementById('prevEtf').value);
+    const currentEtf = parseFloat(document.getElementById('currentEtf').value);
+    const cash       = parseFloat(document.getElementById('cashBalance').value);
+
+    if (isNaN(prevEtf)  || prevEtf  <= 0) return showError('Please enter your TQQQ value at the start of this quarter.');
+    if (isNaN(currentEtf) || currentEtf < 0) return showError('Please enter your current TQQQ value.');
+    if (isNaN(cash) || cash < 0) return showError('Please enter your cash balance (enter 0 if none).');
+
+    const methodA = document.getElementById('panelA').classList.contains('active');
+    let quarterlyGrowth, thirtyDownTriggered;
+
+    if (methodA) {
+      const cp  = parseFloat(document.getElementById('currentPrice').value);
+      const pp  = parseFloat(document.getElementById('prevPrice').value);
+      const tyh = parseFloat(document.getElementById('twoYrHigh').value);
+      if (isNaN(cp)  || cp  <= 0) return showError('Please enter today\'s TQQQ price.');
+      if (isNaN(pp)  || pp  <= 0) return showError('Please enter the TQQQ price at the start of this quarter.');
+      if (isNaN(tyh) || tyh <= 0) return showError('Please enter the 2-year high price of TQQQ.');
+      quarterlyGrowth    = (cp - pp) / pp;
+      thirtyDownTriggered = cp <= tyh * (1 - THIRTY_DOWN);
+    } else {
+      const gpct = parseFloat(document.getElementById('growthPct').value);
+      if (isNaN(gpct)) return showError('Please enter the quarterly growth percentage.');
+      quarterlyGrowth    = gpct / 100;
+      thirtyDownTriggered = document.getElementById('thirtyDownTriggered').checked;
+    }
+
+    const hundredUpTriggered = quarterlyGrowth >= HUNDRED_UP;
+    const thirtyDownActive   = document.getElementById('thirtyDownActive').checked;
+    const sellIgnored        = thirtyDownActive
+      ? parseInt(document.getElementById('sellSignalsIgnored').value) || 0
+      : 0;
+
+    const total      = currentEtf + cash;
+    const targetEtf  = prevEtf * (1 + Q_TARGET);
+
+    // ── Decision tree (mirrors simulate.py exactly) ──────────
+    let action, tradeAmount, etfAfter, cashAfter;
+    let newThirtyDown = thirtyDownActive, newIgnored = sellIgnored;
+    let cashConstrained = false;
+
+    if (hundredUpTriggered) {
+      const tgt = total * INITIAL_ALLOC;
+      tradeAmount   = tgt - currentEtf;
+      etfAfter      = tgt;
+      cashAfter     = total - tgt;
+      action        = '100UP_REBALANCE';
+      newThirtyDown = false;
+      newIgnored    = 0;
+
+    } else if (thirtyDownTriggered && !thirtyDownActive) {
+      newThirtyDown = true;
+      newIgnored    = 0;
+      if (currentEtf < targetEtf) {
+        const gap = targetEtf - currentEtf;
+        const buy = Math.min(gap, cash);
+        cashConstrained = buy < gap;
+        tradeAmount = buy;
+        etfAfter    = currentEtf + buy;
+        cashAfter   = cash - buy;
+        action      = '30DOWN_BUY';
+      } else {
+        tradeAmount = 0; etfAfter = currentEtf; cashAfter = cash;
+        action = '30DOWN_TRIGGERED';
+      }
+
+    } else if (thirtyDownActive) {
+      if (currentEtf >= targetEtf) {
+        newIgnored = sellIgnored + 1;
+        if (newIgnored >= IGNORE_COUNT) {
+          const tgt = total * INITIAL_ALLOC;
+          tradeAmount   = tgt - currentEtf;
+          etfAfter      = tgt;
+          cashAfter     = total - tgt;
+          action        = '30DOWN_RESET_REBALANCE';
+          newThirtyDown = false;
+          newIgnored    = 0;
+        } else {
+          tradeAmount = 0; etfAfter = currentEtf; cashAfter = cash;
+          action = '30DOWN_IGNORE_SELL_' + newIgnored;
+        }
+      } else {
+        const gap = targetEtf - currentEtf;
+        const buy = Math.min(gap, cash);
+        cashConstrained = buy < gap;
+        tradeAmount = buy;
+        etfAfter    = currentEtf + buy;
+        cashAfter   = cash - buy;
+        action      = '30DOWN_BUY';
+      }
+
+    } else {
+      if (currentEtf > targetEtf) {
+        const sell  = currentEtf - targetEtf;
+        tradeAmount = -sell;
+        etfAfter    = targetEtf;
+        cashAfter   = cash + sell;
+        action      = 'SELL';
+      } else if (currentEtf < targetEtf) {
+        const gap = targetEtf - currentEtf;
+        const buy = Math.min(gap, cash);
+        cashConstrained = buy < gap;
+        tradeAmount = buy;
+        etfAfter    = currentEtf + buy;
+        cashAfter   = cash - buy;
+        action      = 'BUY';
+      } else {
+        tradeAmount = 0; etfAfter = currentEtf; cashAfter = cash;
+        action = 'HOLD';
+      }
+    }
+
+    renderResult(action, tradeAmount, etfAfter, cashAfter, total, newThirtyDown,
+                 newIgnored, targetEtf, quarterlyGrowth, cashConstrained,
+                 thirtyDownTriggered, hundredUpTriggered, currentEtf, cash);
+  }
+
+  // ── Render result ───────────────────────────────────────────
+  const ACTION_META = {
+    'BUY':                  { color: 'buy',   emoji: '🟢', title: 'BUY TQQQ',
+      sub: 'Your TQQQ grew less than 9% — buy more to top up to the target.',
+      explain: 'The 9sig rule says your TQQQ position should be worth at least 9% more than it was at the start of this quarter. It fell short, so you need to buy more TQQQ to bring it up to the target level.' },
+    'SELL':                 { color: 'sell',  emoji: '🔴', title: 'SELL TQQQ',
+      sub: 'Your TQQQ grew more than 9% — sell the extra and keep it as cash.',
+      explain: 'TQQQ performed better than the 9% quarterly target, so you have more than needed. The strategy says to trim the excess and move that profit to cash. This locks in gains and rebuilds your cash cushion for the next downturn.' },
+    'HOLD':                 { color: 'hold',  emoji: '⚪', title: 'HOLD — No trade',
+      sub: 'Your TQQQ is exactly at the 9% target. Nothing to do this quarter.',
+      explain: 'Your TQQQ position hit the 9% growth target exactly — rare but it happens! The strategy requires no action. Sit tight until next quarter.' },
+    '100UP_REBALANCE':      { color: 'rebal', emoji: '🟡', title: 'REBALANCE (100-Up Rule)',
+      sub: 'TQQQ doubled this quarter! Lock in gains — rebalance back to 60/40.',
+      explain: 'The 100-Up rule fires when TQQQ doubles in a single quarter. This is rare but very significant. To protect the windfall, the strategy immediately resets to the original 60% TQQQ / 40% cash split — selling a large portion of the gains.' },
+    '30DOWN_BUY':           { color: 'down',  emoji: '🟠', title: 'BUY TQQQ (30-Down rule)',
+      sub: 'TQQQ is in a crash zone. Keep buying the dip to support the position.',
+      explain: 'The 30-Down rule is active — TQQQ has dropped 30% or more from its 2-year high. In crash conditions the strategy still buys, using available cash to top up your TQQQ to the target. This is the strategy "buying the dip" aggressively.' },
+    '30DOWN_TRIGGERED':     { color: 'down',  emoji: '🟠', title: '30-Down ACTIVATED — Hold',
+      sub: 'TQQQ just entered crash territory. No trade needed yet — ETF is at target.',
+      explain: 'The 30-Down rule just triggered for the first time this period. However, your TQQQ position is already at or above the 9% target, so no buy is needed right now. The 30-Down mode is now active — starting next quarter, sell signals will be ignored.' },
+    '30DOWN_RESET_REBALANCE': { color: 'rebal', emoji: '🟣', title: 'REBALANCE (30-Down Reset)',
+      sub: '30-Down cycle complete — rebalance back to 60% TQQQ / 40% cash.',
+      explain: 'The 30-Down period is over. After ignoring the maximum number of sell signals, the strategy exits crash mode and rebalances the portfolio back to the original 60/40 allocation. The 30-Down rule resets to inactive.' },
+  };
+
+  function getIgnoreMeta(n) {
+    return { color: 'down', emoji: '🟠', title: `HOLD — Ignore Sell Signal #${n}`,
+      sub: `30-Down is active. The strategy skips this sell signal (${n} of ${IGNORE_COUNT} ignored).`,
+      explain: `While the 30-Down rule is active, the strategy deliberately ignores sell signals — because selling in a crash would lock in losses. This is sell signal #${n} being ignored. After ${IGNORE_COUNT} ignored signals the strategy will rebalance and exit crash mode.` };
+  }
+
+  function getNextSteps(action, tradeAmount, etfAfter, cashAfter, cashConstrained) {
+    const steps = [];
+    if (action === 'BUY' || action === '30DOWN_BUY') {
+      steps.push(`Log in to your brokerage account.`);
+      steps.push(`Buy <strong>${fmt(tradeAmount)}</strong> worth of TQQQ shares.`);
+      if (cashConstrained) steps.push(`⚠ You didn't have enough cash for the full amount — buy as much as you can.`);
+      steps.push(`After buying, your TQQQ should be worth approximately <strong>${fmt(etfAfter)}</strong>.`);
+      steps.push(`Note down your new cash balance (<strong>${fmt(cashAfter)}</strong>) for next quarter.`);
+    } else if (action === 'SELL' || action === '30DOWN_RESET_REBALANCE' || action === '100UP_REBALANCE') {
+      const sellAmt = Math.abs(tradeAmount);
+      const isBuy   = tradeAmount > 0;
+      if (isBuy) {
+        steps.push(`Log in to your brokerage account.`);
+        steps.push(`Buy <strong>${fmt(tradeAmount)}</strong> worth of TQQQ shares.`);
+        steps.push(`After buying, your TQQQ should be worth approximately <strong>${fmt(etfAfter)}</strong>.`);
+      } else {
+        steps.push(`Log in to your brokerage account.`);
+        steps.push(`Sell <strong>${fmt(sellAmt)}</strong> worth of TQQQ shares.`);
+        steps.push(`After selling, your TQQQ should be worth approximately <strong>${fmt(etfAfter)}</strong>.`);
+        steps.push(`The proceeds (<strong>${fmt(sellAmt)}</strong>) go into cash.`);
+      }
+      steps.push(`Note down your new cash balance (<strong>${fmt(cashAfter)}</strong>) for next quarter.`);
+    } else {
+      steps.push(`No trade needed this quarter — you're done!`);
+      steps.push(`Set a reminder to check again at the end of next quarter.`);
+    }
+    return steps;
+  }
+
+  function renderResult(action, tradeAmount, etfAfter, cashAfter, total,
+                        newThirtyDown, newIgnored, targetEtf, growth,
+                        cashConstrained, thirtyTriggered, hundredUp, currentEtf, cash) {
+    const meta = action.startsWith('30DOWN_IGNORE_SELL_')
+      ? getIgnoreMeta(action.split('_').pop())
+      : (ACTION_META[action] || { color:'hold', emoji:'⚪', title: action, sub:'', explain:'' });
+
+    // Header
+    const hdr = document.getElementById('resultHeader');
+    hdr.className = 'result-header ' + meta.color;
+    document.getElementById('resultActionLabel').textContent = meta.emoji + '  ' + meta.title;
+    document.getElementById('resultActionSub').textContent   = meta.sub;
+
+    // Trade amount badge
+    const tVal = document.getElementById('resultTradeVal');
+    if (Math.abs(tradeAmount) < 0.01) {
+      tVal.textContent = '$0 — No trade';
+    } else if (tradeAmount > 0) {
+      tVal.textContent = '+' + fmt(tradeAmount) + ' BUY';
+    } else {
+      tVal.textContent = '−' + fmt(Math.abs(tradeAmount)) + ' SELL';
+    }
+
+    // Explain
+    document.getElementById('resultExplain').textContent = meta.explain;
+
+    // Next steps
+    const steps = getNextSteps(action, tradeAmount, etfAfter, cashAfter, cashConstrained);
+    const ol = document.getElementById('resultStepsList');
+    ol.innerHTML = steps.map(s => `<li>${s}</li>`).join('');
+
+    // Portfolio boxes
+    document.getElementById('rbEtf').textContent   = fmt(etfAfter);
+    document.getElementById('rbCash').textContent  = fmt(cashAfter);
+    document.getElementById('rbTotal').textContent = fmt(etfAfter + cashAfter);
+    const allocPct = etfAfter + cashAfter > 0 ? (etfAfter / (etfAfter + cashAfter) * 100).toFixed(1) : '0.0';
+    document.getElementById('rbAlloc').textContent = allocPct + '%';
+
+    // State
+    document.getElementById('rbThirtyDown').textContent = newThirtyDown ? 'YES' : 'No';
+    document.getElementById('rbIgnored').textContent    = newIgnored;
+
+    // Cash warning
+    const warn = document.getElementById('rbCashWarn');
+    if (cashConstrained) {
+      const shortfall = (targetEtf - currentEtf) - tradeAmount;
+      warn.innerHTML = `⚠ <strong>Cash shortfall:</strong> You needed ${fmt(targetEtf - currentEtf)} to hit the full target but only had ${fmt(cash)} cash. Bought ${fmt(tradeAmount)}. Remaining gap: ${fmt(shortfall)}.`;
+      warn.style.display = 'block';
+    } else {
+      warn.style.display = 'none';
+    }
+
+    // Show result
+    const resultEl = document.getElementById('calcResult');
+    resultEl.classList.add('show');
+    setTimeout(() => resultEl.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+  }
+  </script>
 
   <!-- Important risks -->
   <div class="card">
