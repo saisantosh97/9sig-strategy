@@ -139,14 +139,14 @@ def build_html(results: pd.DataFrame, config: dict) -> str:
     quarter_rows = ""
     for _, row in results.iterrows():
         g = f"{row['quarterly_growth_pct']:.1f}%" if pd.notna(row.get("quarterly_growth_pct")) else "—"
-        color = ""
+        cls = ""
         if pd.notna(row.get("quarterly_growth_pct")):
-            color = "color:#16a34a;" if row["quarterly_growth_pct"] >= 0 else "color:#dc2626;"
+            cls = "pos" if row["quarterly_growth_pct"] >= 0 else "neg"
         quarter_rows += f"""
         <tr>
           <td>{row['quarter'].strftime('%b %Y')}</td>
           <td>${row['price']:.2f}</td>
-          <td style="{color}">{g}</td>
+          <td class="{cls}">{g}</td>
           <td>${row['etf_value']:,.0f}</td>
           <td>${row['cash']:,.0f}</td>
           <td>${row['total']:,.0f}</td>
@@ -161,149 +161,444 @@ def build_html(results: pd.DataFrame, config: dict) -> str:
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>9sig Strategy — Backtest Report</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
   <style>
+    :root {{
+      --bg:        #07090f;
+      --bg2:       #0d1017;
+      --bg3:       #121620;
+      --border:    rgba(255,255,255,0.07);
+      --amber:     #f0a500;
+      --amber-dim: rgba(240,165,0,0.12);
+      --cyan:      #00c8ff;
+      --cyan-dim:  rgba(0,200,255,0.10);
+      --green:     #22d07a;
+      --green-dim: rgba(34,208,122,0.10);
+      --red:       #ff4d5a;
+      --red-dim:   rgba(255,77,90,0.10);
+      --orange:    #ff8c42;
+      --orange-dim:rgba(255,140,66,0.10);
+      --text:      #dde2ec;
+      --text-muted:#6b7590;
+      --text-dim:  #9ba3b8;
+      --mono:      'JetBrains Mono', monospace;
+      --sans:      'Syne', sans-serif;
+      --body:      'Inter', sans-serif;
+    }}
+
     * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+
     body {{
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #f1f5f9;
-      color: #1e293b;
+      font-family: var(--body);
+      background: var(--bg);
+      color: var(--text);
       line-height: 1.6;
+      min-height: 100vh;
+      background-image:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0,200,255,0.06) 0%, transparent 60%),
+        linear-gradient(180deg, #07090f 0%, #090c14 100%);
     }}
-    .page {{ max-width: 960px; margin: 0 auto; padding: 32px 20px 60px; }}
 
-    /* Header */
+    .page {{ max-width: 1000px; margin: 0 auto; padding: 40px 24px 80px; }}
+
+    /* ── Animations ─────────────────────────────────────────────────── */
+    @keyframes fadeUp {{
+      from {{ opacity: 0; transform: translateY(18px); }}
+      to   {{ opacity: 1; transform: translateY(0); }}
+    }}
+    @keyframes shimmer {{
+      0%   {{ background-position: -200% center; }}
+      100% {{ background-position:  200% center; }}
+    }}
+    .fade-up {{ animation: fadeUp 0.5s ease both; }}
+    .d1 {{ animation-delay: 0.05s; }}
+    .d2 {{ animation-delay: 0.12s; }}
+    .d3 {{ animation-delay: 0.19s; }}
+    .d4 {{ animation-delay: 0.26s; }}
+    .d5 {{ animation-delay: 0.33s; }}
+    .d6 {{ animation-delay: 0.40s; }}
+    .d7 {{ animation-delay: 0.47s; }}
+
+    /* ── Header ─────────────────────────────────────────────────────── */
     .header {{
-      background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 100%);
-      color: white;
-      border-radius: 16px;
-      padding: 40px 40px 32px;
-      margin-bottom: 32px;
+      position: relative;
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--amber);
+      border-radius: 0 0 16px 16px;
+      background: var(--bg2);
+      padding: 48px 48px 40px;
+      margin-bottom: 40px;
+      overflow: hidden;
     }}
-    .header h1 {{ font-size: 2rem; font-weight: 800; margin-bottom: 6px; }}
-    .header .subtitle {{ font-size: 1.05rem; opacity: 0.85; }}
-    .header .meta {{ margin-top: 16px; font-size: 0.88rem; opacity: 0.7; }}
-
-    /* Section titles */
-    h2 {{ font-size: 1.35rem; font-weight: 700; margin: 36px 0 14px; color: #0f172a; }}
-    h3 {{ font-size: 1.05rem; font-weight: 600; margin: 20px 0 8px; color: #1e293b; }}
-
-    /* Cards */
-    .card {{
-      background: white;
-      border-radius: 12px;
-      padding: 24px;
+    .header::before {{
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 0% 50%, rgba(240,165,0,0.05) 0%, transparent 60%);
+      pointer-events: none;
+    }}
+    .header-tag {{
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--amber);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }}
+    .header-tag::before {{
+      content: '';
+      width: 28px; height: 1.5px;
+      background: var(--amber);
+    }}
+    .header h1 {{
+      font-family: var(--sans);
+      font-size: 3.2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #fff;
+      line-height: 1.05;
+      margin-bottom: 10px;
+    }}
+    .header h1 span {{
+      background: linear-gradient(90deg, var(--amber) 0%, #ffcc55 50%, var(--amber) 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer 3s linear infinite;
+    }}
+    .header .subtitle {{
+      font-size: 1rem;
+      color: var(--text-dim);
       margin-bottom: 24px;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }}
+    .header .meta-row {{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }}
+    .meta-pill {{
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 12px;
+    }}
+    .meta-pill strong {{ color: var(--text-dim); }}
+
+    /* ── Section headings ───────────────────────────────────────────── */
+    .section-label {{
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      margin-bottom: 6px;
+    }}
+    h2 {{
+      font-family: var(--sans);
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }}
+    h3 {{
+      font-family: var(--sans);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
     }}
 
-    /* Stat grid */
+    /* ── Cards ──────────────────────────────────────────────────────── */
+    .card {{
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px 32px;
+      margin-bottom: 24px;
+    }}
+    .card p {{
+      color: var(--text-dim);
+      font-size: 0.93rem;
+      line-height: 1.75;
+    }}
+
+    /* ── Stat grid ──────────────────────────────────────────────────── */
     .stats-grid {{
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(148px, 1fr));
+      gap: 14px;
+      margin-bottom: 28px;
     }}
     .stat-card {{
-      background: white;
+      background: var(--bg2);
+      border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 20px;
+      padding: 22px 18px 18px;
       text-align: center;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      position: relative;
+      transition: border-color 0.2s, transform 0.2s;
     }}
-    .stat-card .label {{ font-size: 0.8rem; color: #64748b; text-transform: uppercase;
-                         letter-spacing: 0.05em; margin-bottom: 6px; }}
-    .stat-card .value {{ font-size: 1.6rem; font-weight: 800; color: #2563eb; }}
-    .stat-card .sub   {{ font-size: 0.78rem; color: #94a3b8; margin-top: 4px; }}
+    .stat-card:hover {{
+      border-color: rgba(240,165,0,0.3);
+      transform: translateY(-2px);
+    }}
+    .stat-card::after {{
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: 12px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
+      pointer-events: none;
+    }}
+    .stat-card .label {{
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.10em;
+      margin-bottom: 10px;
+    }}
+    .stat-card .value {{
+      font-family: var(--mono);
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: var(--amber);
+      line-height: 1;
+      margin-bottom: 6px;
+    }}
+    .stat-card .value.neg {{ color: var(--red); }}
+    .stat-card .sub {{
+      font-size: 0.72rem;
+      color: var(--text-muted);
+    }}
 
-    /* Compare table */
+    /* ── Compare table ──────────────────────────────────────────────── */
     .compare-table {{ width: 100%; border-collapse: collapse; }}
     .compare-table th, .compare-table td {{
-      padding: 12px 16px; text-align: left; border-bottom: 1px solid #e2e8f0;
+      padding: 13px 18px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
     }}
-    .compare-table th {{ font-size: 0.82rem; color: #64748b; text-transform: uppercase;
-                         letter-spacing: 0.05em; background: #f8fafc; }}
-    .compare-table .highlight {{ color: #2563eb; font-weight: 700; }}
+    .compare-table th {{
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.10em;
+      background: var(--bg3);
+    }}
+    .compare-table th:first-child {{ border-radius: 8px 0 0 8px; }}
+    .compare-table th:last-child  {{ border-radius: 0 8px 8px 0; }}
+    .compare-table td {{ color: var(--text-dim); }}
+    .compare-table td:first-child {{ color: var(--text); }}
+    .compare-table .highlight {{
+      font-family: var(--mono);
+      color: var(--cyan);
+      font-weight: 600;
+    }}
+    .compare-table tbody tr:hover td {{ background: rgba(255,255,255,0.02); }}
 
-    /* Chart */
-    .chart-img {{ width: 100%; border-radius: 10px; display: block; }}
+    /* ── Chart ──────────────────────────────────────────────────────── */
+    .chart-img {{
+      width: 100%;
+      border-radius: 10px;
+      display: block;
+      border: 1px solid var(--border);
+    }}
+    .chart-caption {{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 18px;
+    }}
+    .chart-caption span {{
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      padding: 4px 10px;
+      border-radius: 6px;
+    }}
+    .chart-caption span b {{ color: var(--text-dim); }}
 
-    /* Rules */
+    /* ── Rule boxes ─────────────────────────────────────────────────── */
+    .rules-grid {{
+      display: grid;
+      gap: 14px;
+    }}
     .rule-box {{
-      border-left: 4px solid #2563eb;
-      background: #eff6ff;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--cyan);
+      background: var(--cyan-dim);
       border-radius: 0 10px 10px 0;
-      padding: 16px 20px;
-      margin-bottom: 14px;
+      padding: 18px 22px;
     }}
-    .rule-box.green  {{ border-color: #16a34a; background: #f0fdf4; }}
-    .rule-box.orange {{ border-color: #ea580c; background: #fff7ed; }}
-    .rule-box.red    {{ border-color: #dc2626; background: #fef2f2; }}
-    .rule-box h3     {{ margin: 0 0 6px; font-size: 1rem; }}
-    .rule-box p      {{ font-size: 0.9rem; color: #334155; margin: 0; }}
+    .rule-box.green  {{ border-left-color: var(--green);  background: var(--green-dim); }}
+    .rule-box.orange {{ border-left-color: var(--orange); background: var(--orange-dim); }}
+    .rule-box.red    {{ border-left-color: var(--red);    background: var(--red-dim); }}
+    .rule-box h3 {{
+      font-family: var(--sans);
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #fff;
+    }}
+    .rule-box p  {{ font-size: 0.88rem; color: var(--text-dim); line-height: 1.7; }}
+    .rule-box strong {{ color: var(--text); }}
+    .rule-box em {{ color: var(--text-muted); font-style: italic; }}
 
-    /* Quarter table */
-    .q-table {{ width: 100%; border-collapse: collapse; font-size: 0.85rem; }}
+    /* ── Quarter table ──────────────────────────────────────────────── */
+    .q-table {{ width: 100%; border-collapse: collapse; font-size: 0.82rem; }}
     .q-table th, .q-table td {{
-      padding: 9px 12px; text-align: right; border-bottom: 1px solid #f1f5f9;
+      padding: 9px 14px;
+      text-align: right;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
     }}
-    .q-table th {{ background: #f8fafc; color: #64748b; font-size: 0.78rem;
-                   text-transform: uppercase; letter-spacing: 0.04em; text-align: right; }}
+    .q-table th {{
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      background: var(--bg3);
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      text-align: right;
+    }}
+    .q-table td {{ font-family: var(--mono); color: var(--text-dim); }}
     .q-table td:first-child, .q-table th:first-child {{ text-align: left; }}
-    .q-table tr:hover {{ background: #f8fafc; }}
+    .q-table tbody tr:hover td {{ background: rgba(255,255,255,0.025); }}
+    .q-table .pos {{ color: var(--green); }}
+    .q-table .neg {{ color: var(--red); }}
 
-    /* Badges */
+    /* ── Badges ─────────────────────────────────────────────────────── */
     .badge {{
-      display: inline-block; padding: 3px 9px; border-radius: 20px;
-      font-size: 0.75rem; font-weight: 600;
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
     }}
-    .badge-buy    {{ background: #dcfce7; color: #166534; }}
-    .badge-sell   {{ background: #fee2e2; color: #991b1b; }}
-    .badge-100up  {{ background: #fef9c3; color: #854d0e; }}
-    .badge-reset  {{ background: #ede9fe; color: #5b21b6; }}
-    .badge-ignore {{ background: #fff7ed; color: #9a3412; }}
-    .badge-init   {{ background: #e2e8f0; color: #475569; }}
+    .badge-buy    {{ background: rgba(34,208,122,0.15); color: #22d07a; border: 1px solid rgba(34,208,122,0.25); }}
+    .badge-sell   {{ background: rgba(255,77,90,0.15);  color: #ff4d5a; border: 1px solid rgba(255,77,90,0.25); }}
+    .badge-100up  {{ background: rgba(240,165,0,0.15);  color: var(--amber); border: 1px solid rgba(240,165,0,0.25); }}
+    .badge-reset  {{ background: rgba(0,200,255,0.12);  color: var(--cyan);  border: 1px solid rgba(0,200,255,0.2); }}
+    .badge-ignore {{ background: rgba(255,140,66,0.13); color: var(--orange);border: 1px solid rgba(255,140,66,0.22); }}
+    .badge-init   {{ background: rgba(255,255,255,0.06);color: var(--text-dim);border: 1px solid var(--border); }}
 
-    /* Disclaimer */
+    /* ── Risk list ──────────────────────────────────────────────────── */
+    .risk-list {{
+      list-style: none;
+      display: grid;
+      gap: 10px;
+    }}
+    .risk-list li {{
+      display: flex;
+      gap: 12px;
+      font-size: 0.88rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+    }}
+    .risk-list li::before {{
+      content: '⚠';
+      font-size: 0.8rem;
+      color: var(--orange);
+      flex-shrink: 0;
+      margin-top: 2px;
+    }}
+    .risk-list strong {{ color: var(--text); }}
+
+    /* ── Disclaimer ─────────────────────────────────────────────────── */
     .disclaimer {{
-      background: #fefce8; border: 1px solid #fde047;
-      border-radius: 10px; padding: 16px 20px;
-      font-size: 0.82rem; color: #713f12; margin-top: 32px;
+      border: 1px solid rgba(240,165,0,0.2);
+      background: rgba(240,165,0,0.05);
+      border-radius: 10px;
+      padding: 16px 20px;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 32px;
+      line-height: 1.7;
+    }}
+    .disclaimer strong {{ color: var(--amber); }}
+
+    /* ── Footer ─────────────────────────────────────────────────────── */
+    footer {{
+      text-align: center;
+      color: var(--text-muted);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      margin-top: 48px;
+      letter-spacing: 0.05em;
+    }}
+    footer span {{ color: var(--border); margin: 0 8px; }}
+
+    /* ── Divider ────────────────────────────────────────────────────── */
+    .divider {{
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 8px 0 28px;
     }}
 
-    footer {{ text-align: center; color: #94a3b8; font-size: 0.8rem; margin-top: 40px; }}
+    /* ── Scrollable table wrapper ───────────────────────────────────── */
+    .table-scroll {{ overflow-x: auto; }}
+
+    @media (max-width: 600px) {{
+      .header {{ padding: 32px 24px 28px; }}
+      .header h1 {{ font-size: 2.2rem; }}
+      .card {{ padding: 20px; }}
+    }}
   </style>
 </head>
 <body>
 <div class="page">
 
   <!-- Header -->
-  <div class="header">
-    <h1>9sig Strategy</h1>
-    <div class="subtitle">TQQQ Backtest Report — A Beginner's Guide</div>
-    <div class="meta">
-      Simulation period: {start_dt.strftime('%B %Y')} → {end_dt.strftime('%B %Y')} &nbsp;|&nbsp;
-      Starting capital: ${starting:,.0f} &nbsp;|&nbsp;
-      Generated: {generated_on}
+  <div class="header fade-up d1">
+    <div class="header-tag">Backtest Report &nbsp;·&nbsp; TQQQ</div>
+    <h1><span>9sig</span> Strategy</h1>
+    <div class="subtitle">Rules-based quarterly investing — historical simulation</div>
+    <div class="meta-row">
+      <div class="meta-pill">Period: <strong>{start_dt.strftime('%b %Y')} → {end_dt.strftime('%b %Y')}</strong></div>
+      <div class="meta-pill">Capital: <strong>${starting:,.0f}</strong></div>
+      <div class="meta-pill">Generated: <strong>{generated_on}</strong></div>
     </div>
   </div>
 
   <!-- What is this? -->
-  <div class="card">
+  <div class="card fade-up d2">
+    <div class="section-label">Overview</div>
     <h2>What is the 9sig Strategy?</h2>
-    <p style="color:#475569; font-size:0.95rem;">
-      The 9sig strategy is a <strong>rules-based quarterly investing system</strong> designed for
-      <strong>TQQQ</strong> — a fund that moves <em>3× the daily return</em> of the NASDAQ-100 index
+    <p>
+      The 9sig strategy is a <strong style="color:var(--text)">rules-based quarterly investing system</strong> designed for
+      <strong style="color:var(--cyan)">TQQQ</strong> — a fund that moves <em>3× the daily return</em> of the NASDAQ-100 index
       (think Apple, Microsoft, Nvidia, Amazon, etc.).<br><br>
       Instead of trying to time the market, 9sig removes emotion entirely: you follow a simple set of
       rules once per quarter and let the math do the work.
-      You start with <strong>60% in TQQQ and 40% in cash</strong>, then rebalance every 3 months
-      using a <strong>9% quarterly growth target</strong>.
+      You start with <strong style="color:var(--text)">60% in TQQQ and 40% in cash</strong>, then rebalance every 3 months
+      using a <strong style="color:var(--amber)">9% quarterly growth target</strong>.
     </p>
   </div>
 
   <!-- Key results -->
-  <h2>Backtest Results at a Glance</h2>
-  <div class="stats-grid">
+  <div class="fade-up d3">
+    <div class="section-label">Performance</div>
+    <h2>Backtest Results at a Glance</h2>
+  </div>
+  <div class="stats-grid fade-up d3">
     <div class="stat-card">
       <div class="label">Starting Capital</div>
       <div class="value">${starting:,.0f}</div>
@@ -320,13 +615,13 @@ def build_html(results: pd.DataFrame, config: dict) -> str:
       <div class="sub">over {years:.1f} years</div>
     </div>
     <div class="stat-card">
-      <div class="label">Annual Growth (CAGR)</div>
+      <div class="label">CAGR</div>
       <div class="value">{cagr:.1f}%</div>
       <div class="sub">per year on average</div>
     </div>
     <div class="stat-card">
       <div class="label">Worst Drawdown</div>
-      <div class="value" style="color:#dc2626;">{max_dd:.0f}%</div>
+      <div class="value neg">{max_dd:.0f}%</div>
       <div class="sub">peak to trough</div>
     </div>
     <div class="stat-card">
@@ -337,17 +632,16 @@ def build_html(results: pd.DataFrame, config: dict) -> str:
   </div>
 
   <!-- Comparison table -->
-  <div class="card">
-    <h2 style="margin-top:0;">9sig vs Buy & Hold TQQQ</h2>
-    <p style="color:#64748b; font-size:0.88rem; margin-bottom:16px;">
-      "Buy & Hold" means investing all ${ starting:,.0f} in TQQQ on day one and never touching it.
-    </p>
+  <div class="card fade-up d4">
+    <div class="section-label">Comparison</div>
+    <h2>9sig vs Buy &amp; Hold TQQQ</h2>
+    <p style="margin-bottom:20px;">"Buy &amp; Hold" means investing all ${starting:,.0f} in TQQQ on day one and never touching it.</p>
     <table class="compare-table">
       <thead>
         <tr>
           <th>Metric</th>
           <th>9sig Strategy</th>
-          <th>Buy & Hold TQQQ</th>
+          <th>Buy &amp; Hold TQQQ</th>
         </tr>
       </thead>
       <tbody>
@@ -372,7 +666,7 @@ def build_html(results: pd.DataFrame, config: dict) -> str:
           <td>~80%+ (2022 crash)</td>
         </tr>
         <tr>
-          <td>Requires active management?</td>
+          <td>Active management required?</td>
           <td class="highlight">Once per quarter</td>
           <td>Never</td>
         </tr>
@@ -381,60 +675,60 @@ def build_html(results: pd.DataFrame, config: dict) -> str:
   </div>
 
   <!-- Charts -->
-  <div class="card">
-    <h2 style="margin-top:0;">Performance Charts</h2>
-    <p style="color:#64748b; font-size:0.88rem; margin-bottom:16px;">
-      <strong>Top:</strong> Portfolio value over time vs buying and holding. &nbsp;
-      <strong>Middle:</strong> How your money is split between TQQQ and cash each quarter. &nbsp;
-      <strong>Bottom:</strong> How far the portfolio fell from its highest point at any time.
-    </p>
+  <div class="card fade-up d4">
+    <div class="section-label">Charts</div>
+    <h2>Performance Over Time</h2>
+    <div class="chart-caption">
+      <span><b>Top:</b> Portfolio value vs buy &amp; hold</span>
+      <span><b>Middle:</b> TQQQ vs cash split per quarter</span>
+      <span><b>Bottom:</b> Peak-to-trough drawdown</span>
+    </div>
     <img class="chart-img" src="data:image/png;base64,{chart_b64}" alt="Performance Charts"/>
   </div>
 
   <!-- How the rules work -->
-  <div class="card">
-    <h2 style="margin-top:0;">How the Rules Work</h2>
-    <p style="color:#475569; font-size:0.9rem; margin-bottom:18px;">
-      Once per quarter you do exactly one of the following actions — nothing in between.
-    </p>
-
-    <div class="rule-box green">
-      <h3>Every Quarter — The 9% Target Rule</h3>
-      <p>
-        At the end of each quarter, check how much your TQQQ position has grown or shrunk:<br><br>
-        <strong>TQQQ grew more than 9%?</strong> → Sell some TQQQ and move the extra gains to cash.<br>
-        <strong>TQQQ grew less than 9%?</strong> → Use cash to buy more TQQQ to reach 9% growth.<br>
-        <strong>TQQQ went negative?</strong> → Still buy more TQQQ to reach the 9% target from last quarter.
-      </p>
-    </div>
-
-    <div class="rule-box red">
-      <h3>Special Rule 1 — "30 Down" (Crash Protection)</h3>
-      <p>
-        <strong>When it triggers:</strong> TQQQ's price drops 30% or more below its highest price
-        in the last 2 years.<br><br>
-        <strong>What changes:</strong> Don't sell TQQQ even if it grows more than 9% — let it recover.
-        Still buy if it's below target. After skipping 2 sell signals, reset the whole portfolio
-        back to 60/40.<br><br>
-        <em>This rule prevented panic selling during the 2022 crash and kept you fully invested
-        for the 2023 recovery.</em>
-      </p>
-    </div>
-
-    <div class="rule-box orange">
-      <h3>Special Rule 2 — "100 Up" (Profit Lock-In)</h3>
-      <p>
-        <strong>When it triggers:</strong> TQQQ gains 100% or more in a single quarter.<br><br>
-        <strong>What happens:</strong> Immediately reset the entire portfolio back to 60/40.<br><br>
-        <em>This triggered in Q2 2020 when TQQQ jumped 105% in one quarter after the COVID crash.</em>
-      </p>
+  <div class="card fade-up d5">
+    <div class="section-label">Rules</div>
+    <h2>How the Rules Work</h2>
+    <p style="margin-bottom:20px;">Once per quarter you take exactly one action — nothing in between.</p>
+    <div class="rules-grid">
+      <div class="rule-box green">
+        <h3>Every Quarter — The 9% Target Rule</h3>
+        <p>
+          At the end of each quarter, check how much your TQQQ position has grown or shrunk:<br><br>
+          <strong>TQQQ grew more than 9%?</strong> → Sell some TQQQ and move the extra gains to cash.<br>
+          <strong>TQQQ grew less than 9%?</strong> → Use cash to buy more TQQQ to reach 9% growth.<br>
+          <strong>TQQQ went negative?</strong> → Still buy more TQQQ to reach the 9% target from last quarter.
+        </p>
+      </div>
+      <div class="rule-box red">
+        <h3>Special Rule 1 — "30 Down" (Crash Protection)</h3>
+        <p>
+          <strong>When it triggers:</strong> TQQQ's price drops 30% or more below its highest price
+          in the last 2 years.<br><br>
+          <strong>What changes:</strong> Don't sell TQQQ even if it grows more than 9% — let it recover.
+          Still buy if it's below target. After skipping 2 sell signals, reset the whole portfolio
+          back to 60/40.<br><br>
+          <em>This rule prevented panic selling during the 2022 crash and kept you fully invested
+          for the 2023 recovery.</em>
+        </p>
+      </div>
+      <div class="rule-box orange">
+        <h3>Special Rule 2 — "100 Up" (Profit Lock-In)</h3>
+        <p>
+          <strong>When it triggers:</strong> TQQQ gains 100% or more in a single quarter.<br><br>
+          <strong>What happens:</strong> Immediately reset the entire portfolio back to 60/40.<br><br>
+          <em>This triggered in Q2 2020 when TQQQ jumped 105% in one quarter after the COVID crash.</em>
+        </p>
+      </div>
     </div>
   </div>
 
   <!-- Quarterly table -->
-  <div class="card">
-    <h2 style="margin-top:0;">Quarter-by-Quarter Results</h2>
-    <div style="overflow-x:auto;">
+  <div class="card fade-up d6">
+    <div class="section-label">History</div>
+    <h2>Quarter-by-Quarter Results</h2>
+    <div class="table-scroll">
       <table class="q-table">
         <thead>
           <tr>
@@ -444,7 +738,7 @@ def build_html(results: pd.DataFrame, config: dict) -> str:
             <th>TQQQ Value</th>
             <th>Cash</th>
             <th>Total</th>
-            <th>Action Taken</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -455,9 +749,10 @@ def build_html(results: pd.DataFrame, config: dict) -> str:
   </div>
 
   <!-- Important risks -->
-  <div class="card">
-    <h2 style="margin-top:0;">Important Risks to Understand</h2>
-    <ul style="color:#475569; font-size:0.9rem; padding-left:20px; line-height:2;">
+  <div class="card fade-up d7">
+    <div class="section-label">Risk</div>
+    <h2>Important Risks to Understand</h2>
+    <ul class="risk-list">
       <li><strong>TQQQ is 3× leveraged</strong> — it moves 3 times more than the NASDAQ each day, up <em>and</em> down.</li>
       <li><strong>Volatility decay:</strong> Over time, daily rebalancing in leveraged ETFs can erode returns in sideways markets.</li>
       <li><strong>The 2022 crash shows the real risk:</strong> The portfolio fell over 60% from peak to trough and cash ran out — there was nothing left to buy the dip with.</li>
@@ -466,7 +761,7 @@ def build_html(results: pd.DataFrame, config: dict) -> str:
     </ul>
   </div>
 
-  <div class="disclaimer">
+  <div class="disclaimer fade-up d7">
     <strong>Disclaimer:</strong> This report is for educational and informational purposes only.
     It is not financial advice. The results shown are from a historical backtest and do not
     guarantee future performance. Investing in leveraged ETFs involves significant risk,
@@ -474,9 +769,12 @@ def build_html(results: pd.DataFrame, config: dict) -> str:
     advisor before making investment decisions.
   </div>
 
-  <footer>
-    9sig Strategy Backtest &nbsp;|&nbsp; Generated on {generated_on} &nbsp;|&nbsp;
-    Data: TQQQ ({start_dt.strftime('%b %Y')} – {end_dt.strftime('%b %Y')})
+  <footer class="fade-up d7">
+    9sig Strategy Backtest
+    <span>·</span>
+    Generated {generated_on}
+    <span>·</span>
+    TQQQ data {start_dt.strftime('%b %Y')} – {end_dt.strftime('%b %Y')}
   </footer>
 
 </div>
