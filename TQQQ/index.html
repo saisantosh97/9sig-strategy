@@ -410,26 +410,32 @@
     }
 
     /* ── Calculator ─────────────────────────────────────────────────── */
-    .calc-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-      margin-bottom: 24px;
+    .calc-section-title {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      color: var(--cyan);
+      margin-bottom: 10px;
     }
+    .calc-grid { display: grid; gap: 14px; margin-bottom: 8px; }
+    .calc-grid-3 { grid-template-columns: repeat(3, 1fr); }
+    .calc-grid-2 { grid-template-columns: repeat(2, 1fr); }
     .calc-label {
       display: block;
       font-family: var(--mono);
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       text-transform: uppercase;
       letter-spacing: 0.1em;
       color: var(--text-muted);
-      margin-bottom: 8px;
+      margin-bottom: 7px;
     }
     .calc-input {
       width: 100%;
-      padding: 12px 16px;
+      padding: 10px 14px;
       font-family: var(--mono);
-      font-size: 1.05rem;
+      font-size: 0.95rem;
       background: var(--bg3);
       border: 1px solid var(--border);
       border-radius: 8px;
@@ -441,52 +447,139 @@
       border-color: var(--cyan);
       box-shadow: 0 0 0 3px rgba(0,114,163,0.1);
     }
-    .calc-result {
+    .calc-toggle-row { display: flex; gap: 8px; }
+    .calc-toggle {
+      flex: 1;
+      padding: 10px;
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--bg3);
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .calc-toggle.active-no  { background: var(--green-dim); border-color: var(--green); color: var(--green); }
+    .calc-toggle.active-yes { background: var(--orange-dim); border-color: var(--orange); color: var(--orange); }
+    .calc-price-info {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--text-muted);
       background: var(--bg3);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 24px 28px;
-      display: flex;
-      gap: 40px;
-      align-items: center;
-      margin-bottom: 14px;
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-top: 10px;
+      display: none;
+      gap: 24px;
       flex-wrap: wrap;
     }
-    .calc-result-main { flex: 1; min-width: 160px; }
+    .calc-price-info.visible { display: flex; }
+    .calc-price-info span b { color: var(--text); }
+    .calc-price-info span.triggered { color: var(--orange); font-weight: 600; }
+    .calc-run-btn {
+      display: block;
+      width: 100%;
+      margin-top: 20px;
+      padding: 14px;
+      font-family: var(--sans);
+      font-size: 1rem;
+      font-weight: 700;
+      background: var(--cyan);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      letter-spacing: 0.02em;
+    }
+    .calc-run-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    .calc-divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+    .calc-action-row {
+      display: flex;
+      gap: 24px;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
     .calc-result-label {
       font-family: var(--mono);
       font-size: 0.68rem;
       text-transform: uppercase;
       letter-spacing: 0.12em;
       color: var(--text-muted);
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
-    .calc-result-value {
+    .calc-action-badge {
       font-family: var(--mono);
-      font-size: 2.6rem;
+      font-size: 1.6rem;
       font-weight: 700;
-      color: var(--green);
-      line-height: 1;
+      padding: 10px 24px;
+      border-radius: 10px;
+      display: inline-block;
     }
-    .calc-result-stats { display: flex; gap: 28px; flex-wrap: wrap; align-items: center; }
-    .calc-stat { display: flex; flex-direction: column; gap: 5px; }
-    .calc-stat-label {
+    .action-buy     { background: var(--green-dim);  color: var(--green);  border: 2px solid var(--green); }
+    .action-sell    { background: var(--red-dim);    color: var(--red);    border: 2px solid var(--red); }
+    .action-hold    { background: var(--cyan-dim);   color: var(--cyan);   border: 2px solid var(--cyan); }
+    .action-100up   { background: var(--amber-dim);  color: var(--amber);  border: 2px solid var(--amber); }
+    .action-30down  { background: var(--orange-dim); color: var(--orange); border: 2px solid var(--orange); }
+    .calc-action-explain {
+      flex: 1;
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      line-height: 1.65;
+      padding-top: 38px;
+    }
+    .calc-output-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .calc-out-block {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+    .calc-out-label {
       font-family: var(--mono);
       font-size: 0.66rem;
       text-transform: uppercase;
       letter-spacing: 0.1em;
       color: var(--text-muted);
+      margin-bottom: 6px;
     }
-    .calc-stat-value {
+    .calc-out-value {
       font-family: var(--mono);
-      font-size: 1.15rem;
+      font-size: 1.1rem;
       font-weight: 600;
-      color: var(--cyan);
+      color: var(--text);
     }
-    .calc-note {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      font-style: italic;
+    .calc-after-title {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.13em;
+      color: var(--cyan);
+      margin-bottom: 10px;
+    }
+    .calc-cash-warning {
+      font-size: 0.82rem;
+      color: var(--orange);
+      background: var(--orange-dim);
+      border: 1px solid rgba(184,92,26,0.25);
+      border-radius: 8px;
+      padding: 10px 14px;
+      margin-top: 8px;
+    }
+    @media (max-width: 680px) {
+      .calc-grid-3 { grid-template-columns: 1fr; }
+      .calc-grid-2 { grid-template-columns: 1fr; }
+      .calc-output-grid { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
 </head>
@@ -1057,42 +1150,116 @@
     </ul>
   </div>
 
-  <!-- Investment Calculator -->
+  <!-- 9sig Calculator -->
   <div class="card fade-up d6" id="calculator">
     <div class="section-label">Calculator</div>
-    <h2>Project Your Returns</h2>
-    <p style="margin-bottom:24px;">Enter your starting capital and investment horizon to see a projection based on the historical 36.4% CAGR from this backtest.</p>
-    <div class="calc-grid">
+    <h2>9sig Quarter-End Decision Calculator</h2>
+    <p style="margin-bottom:24px;">Enter your current portfolio state and price data. The calculator will tell you exactly what action to take this quarter — Buy, Sell, Hold, or a special rule.</p>
+
+    <div class="calc-section-title">Portfolio State</div>
+    <div class="calc-grid calc-grid-3">
       <div>
-        <label class="calc-label" for="calcCapital">Starting Capital ($)</label>
-        <input type="number" id="calcCapital" class="calc-input" value="5000" min="100" step="500">
+        <label class="calc-label" for="cPrevEtf">TQQQ Value — Start of Quarter ($)</label>
+        <input type="number" id="cPrevEtf" class="calc-input" placeholder="e.g. 10000" min="0" step="100">
       </div>
       <div>
-        <label class="calc-label" for="calcYears">Investment Horizon (Years)</label>
-        <input type="number" id="calcYears" class="calc-input" value="10" min="1" max="30" step="1">
+        <label class="calc-label" for="cCurEtf">TQQQ Value — End of Quarter ($)</label>
+        <input type="number" id="cCurEtf" class="calc-input" placeholder="e.g. 10900" min="0" step="100">
+      </div>
+      <div>
+        <label class="calc-label" for="cCash">Cash Balance ($)</label>
+        <input type="number" id="cCash" class="calc-input" placeholder="e.g. 5000" min="0" step="100">
       </div>
     </div>
-    <div class="calc-result">
-      <div class="calc-result-main">
-        <div class="calc-result-label">Projected Final Value</div>
-        <div class="calc-result-value" id="calcFinalValue">$111,497</div>
+
+    <div class="calc-section-title" style="margin-top:20px;">Price Data</div>
+    <div class="calc-grid calc-grid-3">
+      <div>
+        <label class="calc-label" for="cCurPrice">Current TQQQ Price ($)</label>
+        <input type="number" id="cCurPrice" class="calc-input" placeholder="e.g. 56.76" min="0" step="0.01" oninput="updatePriceInfo()">
       </div>
-      <div class="calc-result-stats">
-        <div class="calc-stat">
-          <span class="calc-stat-label">Total Return</span>
-          <span class="calc-stat-value" id="calcReturn">2,130%</span>
-        </div>
-        <div class="calc-stat">
-          <span class="calc-stat-label">Total Profit</span>
-          <span class="calc-stat-value" id="calcProfit">$106,497</span>
-        </div>
-        <div class="calc-stat">
-          <span class="calc-stat-label">CAGR Used</span>
-          <span class="calc-stat-value">36.4%</span>
-        </div>
+      <div>
+        <label class="calc-label" for="cPrevPrice">Previous Quarter-End Price ($)</label>
+        <input type="number" id="cPrevPrice" class="calc-input" placeholder="e.g. 52.72" min="0" step="0.01" oninput="updatePriceInfo()">
+      </div>
+      <div>
+        <label class="calc-label" for="c2yrHigh">2-Year High Price ($)</label>
+        <input type="number" id="c2yrHigh" class="calc-input" placeholder="e.g. 68.00" min="0" step="0.01" oninput="updatePriceInfo()">
       </div>
     </div>
-    <div class="calc-note">Based on historical backtest CAGR of 36.4%. Past performance does not guarantee future results.</div>
+    <div class="calc-price-info" id="calcPriceInfo"></div>
+
+    <div class="calc-section-title" style="margin-top:20px;">30-Down Rule State</div>
+    <div class="calc-grid calc-grid-2">
+      <div>
+        <label class="calc-label">Is 30-Down Rule Currently Active?</label>
+        <div class="calc-toggle-row">
+          <button class="calc-toggle active-no" id="btnTDNo"  onclick="setThirtyDown(false)">No</button>
+          <button class="calc-toggle"            id="btnTDYes" onclick="setThirtyDown(true)">Yes</button>
+        </div>
+      </div>
+      <div id="ignoredWrapper" style="display:none;">
+        <label class="calc-label" for="cIgnored">Sell Signals Already Ignored (0, 1, …)</label>
+        <input type="number" id="cIgnored" class="calc-input" value="0" min="0" max="10" step="1">
+      </div>
+    </div>
+
+    <button class="calc-run-btn" onclick="runCalc()">Calculate My Action →</button>
+
+    <div id="calcOutput" style="display:none;">
+      <hr class="calc-divider">
+      <div class="calc-action-row">
+        <div>
+          <div class="calc-result-label">Recommended Action</div>
+          <div class="calc-action-badge" id="calcActionBadge"></div>
+        </div>
+        <div class="calc-action-explain" id="calcActionExplain"></div>
+      </div>
+
+      <div class="calc-output-grid" style="margin-bottom:20px;">
+        <div class="calc-out-block">
+          <div class="calc-out-label">Target ETF Value</div>
+          <div class="calc-out-value" id="calcTargetEtf"></div>
+        </div>
+        <div class="calc-out-block">
+          <div class="calc-out-label">Trade Amount</div>
+          <div class="calc-out-value" id="calcTradeAmt"></div>
+        </div>
+        <div class="calc-out-block">
+          <div class="calc-out-label">Quarterly Growth</div>
+          <div class="calc-out-value" id="calcQGrowth"></div>
+        </div>
+      </div>
+
+      <div class="calc-after-title">Portfolio After Trade</div>
+      <div class="calc-output-grid">
+        <div class="calc-out-block">
+          <div class="calc-out-label">TQQQ Value</div>
+          <div class="calc-out-value" id="calcEtfAfter"></div>
+        </div>
+        <div class="calc-out-block">
+          <div class="calc-out-label">Cash</div>
+          <div class="calc-out-value" id="calcCashAfter"></div>
+        </div>
+        <div class="calc-out-block">
+          <div class="calc-out-label">Total Portfolio</div>
+          <div class="calc-out-value" id="calcTotalAfter"></div>
+        </div>
+        <div class="calc-out-block">
+          <div class="calc-out-label">ETF Allocation</div>
+          <div class="calc-out-value" id="calcAllocAfter"></div>
+        </div>
+        <div class="calc-out-block">
+          <div class="calc-out-label">30-Down Active (Next Q)</div>
+          <div class="calc-out-value" id="calcTDAfter"></div>
+        </div>
+        <div class="calc-out-block">
+          <div class="calc-out-label">Sell Signals Ignored</div>
+          <div class="calc-out-value" id="calcIgnAfter"></div>
+        </div>
+      </div>
+      <div id="calcCashWarning" class="calc-cash-warning" style="display:none;"></div>
+    </div>
   </div>
 
   <div class="disclaimer fade-up d7">
@@ -1113,20 +1280,174 @@
 
 </div>
 <script>
-  function updateCalculator() {
-    const capital = parseFloat(document.getElementById('calcCapital').value) || 5000;
-    const years   = parseInt(document.getElementById('calcYears').value) || 10;
-    const cagr    = 0.364;
-    const final   = capital * Math.pow(1 + cagr, years);
-    const profit  = final - capital;
-    const ret     = ((final - capital) / capital) * 100;
-    document.getElementById('calcFinalValue').textContent = '$' + Math.round(final).toLocaleString();
-    document.getElementById('calcReturn').textContent     = Math.round(ret).toLocaleString() + '%';
-    document.getElementById('calcProfit').textContent     = '$' + Math.round(profit).toLocaleString();
+  // ── Config (mirrors config.yaml) ──────────────────────────────────
+  const CFG = {
+    q_target:      0.09,
+    ignore_count:  2,
+    initial_alloc: 0.60,
+    hundred_up:    1.00,
+    thirty_down:   0.30,
+  };
+
+  // ── 30-Down toggle ────────────────────────────────────────────────
+  let thirtyDownActive = false;
+  function setThirtyDown(val) {
+    thirtyDownActive = val;
+    document.getElementById('btnTDNo').className  = 'calc-toggle' + (!val ? ' active-no'  : '');
+    document.getElementById('btnTDYes').className = 'calc-toggle' + ( val ? ' active-yes' : '');
+    document.getElementById('ignoredWrapper').style.display = val ? '' : 'none';
   }
-  document.getElementById('calcCapital').addEventListener('input', updateCalculator);
-  document.getElementById('calcYears').addEventListener('input', updateCalculator);
-  updateCalculator();
+  setThirtyDown(false);
+
+  // ── Live price info ───────────────────────────────────────────────
+  function updatePriceInfo() {
+    const cur  = parseFloat(document.getElementById('cCurPrice').value);
+    const prev = parseFloat(document.getElementById('cPrevPrice').value);
+    const hi   = parseFloat(document.getElementById('c2yrHigh').value);
+    const box  = document.getElementById('calcPriceInfo');
+    if (!cur || !prev || !hi) { box.className = 'calc-price-info'; return; }
+    const growth   = (cur - prev) / prev * 100;
+    const tdLevel  = hi * (1 - CFG.thirty_down);
+    const triggered = cur <= tdLevel;
+    const hundredUp = (cur - prev) / prev >= CFG.hundred_up;
+    box.className = 'calc-price-info visible';
+    box.innerHTML =
+      `<span>Quarterly growth: <b>${growth >= 0 ? '+' : ''}${growth.toFixed(2)}%</b></span>` +
+      `<span>30-Down level (70% of 2yr high): <b>$${tdLevel.toFixed(2)}</b></span>` +
+      `<span class="${triggered ? 'triggered' : ''}">30-Down triggered: <b>${triggered ? 'YES ⚠' : 'No'}</b></span>` +
+      (hundredUp ? `<span class="triggered">100-Up triggered: <b>YES ⚡</b></span>` : '');
+  }
+
+  // ── Decision logic (ported from calculator.py) ────────────────────
+  function runCalc() {
+    const prevEtf = parseFloat(document.getElementById('cPrevEtf').value);
+    const curEtf  = parseFloat(document.getElementById('cCurEtf').value);
+    const cash    = parseFloat(document.getElementById('cCash').value);
+    const curP    = parseFloat(document.getElementById('cCurPrice').value);
+    const prevP   = parseFloat(document.getElementById('cPrevPrice').value);
+    const hiP     = parseFloat(document.getElementById('c2yrHigh').value);
+    const ignored = parseInt(document.getElementById('cIgnored').value) || 0;
+
+    if (!prevEtf || !curEtf || isNaN(cash) || !curP || !prevP || !hiP) {
+      alert('Please fill in all fields before calculating.'); return;
+    }
+
+    const qGrowth         = (curP - prevP) / prevP;
+    const tdTriggered     = curP <= hiP * (1 - CFG.thirty_down);
+    const hundredUpTrigg  = qGrowth >= CFG.hundred_up;
+    const targetEtf       = prevEtf * (1 + CFG.q_target);
+    const total           = curEtf + cash;
+
+    let action, trade = 0, etfAfter = curEtf, cashAfter = cash;
+    let newTD = thirtyDownActive, newIgnored = ignored, cashConstrained = false;
+
+    if (hundredUpTrigg) {
+      const tgt = total * CFG.initial_alloc;
+      trade      = tgt - curEtf;
+      etfAfter   = tgt;
+      cashAfter  = total - tgt;
+      action     = '100UP_REBALANCE';
+      newTD      = false; newIgnored = 0;
+
+    } else if (tdTriggered && !thirtyDownActive) {
+      newTD = true; newIgnored = 0;
+      if (curEtf < targetEtf) {
+        const buy = Math.min(targetEtf - curEtf, cash);
+        cashConstrained = buy < (targetEtf - curEtf);
+        trade = buy; etfAfter = curEtf + buy; cashAfter = cash - buy;
+        action = '30DOWN_BUY';
+      } else { action = '30DOWN_TRIGGERED'; }
+
+    } else if (thirtyDownActive) {
+      if (curEtf >= targetEtf) {
+        newIgnored = ignored + 1;
+        if (newIgnored >= CFG.ignore_count) {
+          const tgt = total * CFG.initial_alloc;
+          trade = tgt - curEtf; etfAfter = tgt; cashAfter = total - tgt;
+          action = '30DOWN_RESET_REBALANCE'; newTD = false; newIgnored = 0;
+        } else { action = '30DOWN_IGNORE_SELL_' + newIgnored; trade = 0; }
+      } else {
+        const buy = Math.min(targetEtf - curEtf, cash);
+        cashConstrained = buy < (targetEtf - curEtf);
+        trade = buy; etfAfter = curEtf + buy; cashAfter = cash - buy;
+        action = '30DOWN_BUY';
+      }
+
+    } else {
+      if (curEtf > targetEtf) {
+        const sell = curEtf - targetEtf;
+        trade = -sell; etfAfter = targetEtf; cashAfter = cash + sell; action = 'SELL';
+      } else if (curEtf < targetEtf) {
+        const buy = Math.min(targetEtf - curEtf, cash);
+        cashConstrained = buy < (targetEtf - curEtf);
+        trade = buy; etfAfter = curEtf + buy; cashAfter = cash - buy; action = 'BUY';
+      } else { action = 'HOLD'; }
+    }
+
+    // ── Render result ─────────────────────────────────────────────
+    const LABELS = {
+      'BUY':                    'Buy TQQQ',
+      'SELL':                   'Sell TQQQ',
+      'HOLD':                   'Hold',
+      '100UP_REBALANCE':        '100-Up Rebalance',
+      '30DOWN_BUY':             '30-Down: Buy',
+      '30DOWN_TRIGGERED':       '30-Down: Triggered',
+      '30DOWN_RESET_REBALANCE': '30-Down: Reset & Rebalance',
+    };
+    const EXPLAINS = {
+      'BUY':                    'ETF is below the 9% quarterly growth target. Buy enough TQQQ to reach the target value.',
+      'SELL':                   'ETF has exceeded the 9% quarterly growth target. Sell the surplus and move it to cash.',
+      'HOLD':                   'ETF is exactly at the target value. No trade needed this quarter.',
+      '100UP_REBALANCE':        'TQQQ gained 100%+ this quarter (extraordinary gain). Immediately rebalance the whole portfolio back to 60% ETF / 40% cash.',
+      '30DOWN_BUY':             '30-Down rule is active and ETF is still below target. Buy the shortfall to reach the target value.',
+      '30DOWN_TRIGGERED':       '30-Down rule just activated (price is 30%+ below 2-year high). ETF is already at or above target, so no trade is needed — but track this state next quarter.',
+      '30DOWN_RESET_REBALANCE': '30-Down rule: you have ignored the maximum number of sell signals. Rebalance the portfolio back to 60/40 and exit 30-Down mode.',
+    };
+    const BADGE_CLASS = {
+      'BUY': 'action-buy', 'SELL': 'action-sell', 'HOLD': 'action-hold',
+      '100UP_REBALANCE': 'action-100up',
+      '30DOWN_BUY': 'action-30down', '30DOWN_TRIGGERED': 'action-30down',
+      '30DOWN_RESET_REBALANCE': 'action-30down',
+    };
+    const label   = action.startsWith('30DOWN_IGNORE_SELL_')
+      ? '30-Down: Ignore Sell #' + action.split('_').pop()
+      : (LABELS[action] || action);
+    const explain = action.startsWith('30DOWN_IGNORE_SELL_')
+      ? `30-Down is active and ETF is above target (sell signal #${newIgnored} ignored). Hold — do not sell.`
+      : (EXPLAINS[action] || '');
+    const bclass  = action.startsWith('30DOWN_IGNORE_SELL_') ? 'action-30down' : (BADGE_CLASS[action] || '');
+
+    const $ = id => document.getElementById(id);
+    $('calcActionBadge').textContent  = label;
+    $('calcActionBadge').className    = 'calc-action-badge ' + bclass;
+    $('calcActionExplain').textContent = explain;
+
+    const fmt  = n => '$' + Math.abs(n).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+    const fmtP = n => (n >= 0 ? '+' : '') + n.toFixed(2) + '%';
+    const totalAfter = etfAfter + cashAfter;
+    const allocAfter = totalAfter > 0 ? etfAfter / totalAfter * 100 : 0;
+
+    $('calcTargetEtf').textContent  = fmt(targetEtf);
+    $('calcQGrowth').textContent    = fmtP(qGrowth * 100);
+    $('calcTradeAmt').textContent   = trade === 0 ? '$0.00 (no trade)'
+      : (trade > 0 ? '+' + fmt(trade) + ' buy' : '−' + fmt(-trade) + ' sell');
+    $('calcEtfAfter').textContent   = fmt(etfAfter);
+    $('calcCashAfter').textContent  = fmt(cashAfter);
+    $('calcTotalAfter').textContent = fmt(totalAfter);
+    $('calcAllocAfter').textContent = allocAfter.toFixed(1) + '%';
+    $('calcTDAfter').textContent    = newTD ? 'Yes' : 'No';
+    $('calcIgnAfter').textContent   = newIgnored;
+
+    const warn = $('calcCashWarning');
+    if (cashConstrained) {
+      const shortfall = targetEtf - curEtf - trade;
+      warn.textContent = `⚠ Cash was insufficient to fully reach the target. Bought ${fmt(trade)} (all available cash). Remaining gap: ${fmt(shortfall)}.`;
+      warn.style.display = '';
+    } else { warn.style.display = 'none'; }
+
+    $('calcOutput').style.display = '';
+    document.getElementById('calculator').scrollIntoView({behavior:'smooth', block:'nearest'});
+  }
 </script>
 </body>
 </html>
