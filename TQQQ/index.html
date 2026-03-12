@@ -44,54 +44,7 @@
         linear-gradient(180deg, #f7f9fc 0%, #eef1f8 100%);
     }
 
-    .page { max-width: 1000px; margin: 0 auto; padding: 80px 24px 80px; }
-
-    /* ── Sticky Nav ──────────────────────────────────────────────────── */
-    .site-nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      background: rgba(247,249,252,0.88);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border);
-      transition: box-shadow 0.2s;
-    }
-    .site-nav.scrolled { box-shadow: 0 2px 16px rgba(0,0,0,0.07); }
-    .nav-inner {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 0 24px;
-      height: 52px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .nav-logo {
-      font-family: var(--sans);
-      font-size: 1.1rem;
-      font-weight: 800;
-      color: var(--amber);
-      letter-spacing: -0.02em;
-    }
-    .nav-links { display: flex; gap: 4px; }
-    .nav-links a {
-      font-family: var(--mono);
-      font-size: 0.72rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--text-muted);
-      text-decoration: none;
-      padding: 6px 10px;
-      border-radius: 6px;
-      transition: color 0.15s, background 0.15s;
-    }
-    .nav-links a:hover, .nav-links a.active { color: var(--cyan); background: var(--cyan-dim); }
-    @media (max-width: 600px) {
-      .nav-links { gap: 0; }
-      .nav-links a { font-size: 0.65rem; padding: 5px 7px; }
-    }
+    .page { max-width: 1000px; margin: 0 auto; padding: 40px 24px 80px; }
 
     /* ── Animations ─────────────────────────────────────────────────── */
     @keyframes fadeUp {
@@ -633,43 +586,9 @@
     .value[data-count] { transition: opacity 0.3s; }
     .value.counting { opacity: 0.85; }
 
-    /* ── Growth Chart ────────────────────────────────────────────────── */
-    .chart-wrap { position: relative; width: 100%; }
-    #growthChart { width: 100%; height: 320px; display: block; }
-    .chart-legend {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
-    }
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      font-family: var(--mono);
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-    .legend-dot {
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
   </style>
 </head>
 <body>
-<nav class="site-nav" id="siteNav">
-  <div class="nav-inner">
-    <span class="nav-logo">9sig</span>
-    <div class="nav-links">
-      <a href="#overview">Overview</a>
-      <a href="#performance">Performance</a>
-      <a href="#growth-chart">Chart</a>
-      <a href="#rules">Rules</a>
-      <a href="#calculator">Calculator</a>
-    </div>
-  </div>
-</nav>
 <div class="page">
 
   <!-- Header -->
@@ -734,19 +653,6 @@
       <div class="label">Sharpe Ratio</div>
       <div class="value" data-count="0.88" data-decimals="2">0.88</div>
       <div class="sub">risk-adjusted return</div>
-    </div>
-  </div>
-
-  <!-- Growth Chart -->
-  <div class="card fade-up d4" id="growth-chart">
-    <div class="section-label">Growth</div>
-    <h2>Portfolio Value Over Time</h2>
-    <div class="chart-legend">
-      <div class="legend-item"><div class="legend-dot" style="background:#0072a3;"></div>9sig Strategy</div>
-      <div class="legend-item"><div class="legend-dot" style="background:#0a7a4a;"></div>Buy &amp; Hold TQQQ</div>
-    </div>
-    <div class="chart-wrap">
-      <canvas id="growthChart"></canvas>
     </div>
   </div>
 
@@ -1548,18 +1454,6 @@
     document.getElementById('calculator').scrollIntoView({behavior:'smooth', block:'nearest'});
   }
 
-  // ── Sticky nav: shadow + active link on scroll ────────────────────
-  const nav = document.getElementById('siteNav');
-  const sections = ['overview','performance','growth-chart','rules','calculator']
-    .map(id => document.getElementById(id)).filter(Boolean);
-  window.addEventListener('scroll', () => {
-    nav.classList.toggle('scrolled', window.scrollY > 10);
-    let current = '';
-    sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) current = s.id; });
-    document.querySelectorAll('.nav-links a').forEach(a => {
-      a.classList.toggle('active', a.getAttribute('href') === '#' + current);
-    });
-  }, { passive: true });
 
   // ── Animated stat counters ────────────────────────────────────────
   function animateCount(el) {
@@ -1590,130 +1484,6 @@
   }, { threshold: 0.5 });
   document.querySelectorAll('.value[data-count]').forEach(el => countObserver.observe(el));
 
-  // ── Portfolio Growth Chart ────────────────────────────────────────
-  // Data from backtest results (quarter-end total portfolio values)
-  const CHART_DATA = {
-    labels: ['Mar\'16','Jun\'16','Sep\'16','Dec\'16','Mar\'17','Jun\'17','Sep\'17','Dec\'17',
-             'Mar\'18','Jun\'18','Sep\'18','Dec\'18','Mar\'19','Jun\'19','Sep\'19','Dec\'19',
-             'Mar\'20','Jun\'20','Sep\'20','Dec\'20','Mar\'21','Jun\'21','Sep\'21','Dec\'21',
-             'Mar\'22','Jun\'22','Sep\'22','Dec\'22','Mar\'23','Jun\'23','Sep\'23','Dec\'23',
-             'Mar\'24','Jun\'24','Sep\'24','Dec\'24','Mar\'25','Jun\'25','Sep\'25','Dec\'25','Mar\'26'],
-    sig9:   [5000,5305,5828,7237,7878,8684,9551,11802,
-             10928,11781,13573,9884,13338,14406,14387,18196,
-             13579,25330,30505,36947,37018,43755,44118,51957,
-             44300,27978,22522,20167,32944,47795,44032,57266,
-             66796,74778,73990,78352,64034,89407,104563,105890,111497],
-    bnh:    [5000,5350,5910,7550,8200,9100,10100,12600,
-             11400,12300,14200,9200,13900,15200,15100,19500,
-             10200,24800,32000,40200,40800,49000,49500,59200,
-             46800,17800,13200,11500,22000,38500,33000,50200,
-             67000,84000,82000,91000,63000,108000,134000,132000,133020]
-  };
-
-  function drawChart() {
-    const canvas = document.getElementById('growthChart');
-    if (!canvas) return;
-    const dpr = window.devicePixelRatio || 1;
-    const W = canvas.offsetWidth;
-    const H = 320;
-    canvas.width  = W * dpr;
-    canvas.height = H * dpr;
-    canvas.style.height = H + 'px';
-    const ctx = canvas.getContext('2d');
-    ctx.scale(dpr, dpr);
-
-    const pad = { top: 20, right: 20, bottom: 48, left: 72 };
-    const cw = W - pad.left - pad.right;
-    const ch = H - pad.top  - pad.bottom;
-
-    const allVals = [...CHART_DATA.sig9, ...CHART_DATA.bnh];
-    const maxV = Math.max(...allVals);
-    const n    = CHART_DATA.labels.length;
-
-    const xPos = i => pad.left + (i / (n - 1)) * cw;
-    const yPos = v => pad.top  + ch - (v / maxV) * ch;
-
-    // Grid lines
-    ctx.strokeStyle = 'rgba(0,0,0,0.06)';
-    ctx.lineWidth   = 1;
-    const ticks = [0, 25000, 50000, 75000, 100000, 125000];
-    ticks.forEach(t => {
-      const y = yPos(t);
-      ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.left + cw, y); ctx.stroke();
-      ctx.fillStyle = '#6b7590';
-      ctx.font = '10px "JetBrains Mono", monospace';
-      ctx.textAlign = 'right';
-      ctx.fillText(t >= 1000 ? '$' + (t/1000) + 'k' : '$0', pad.left - 8, y + 4);
-    });
-
-    // Draw line helper
-    function drawLine(data, color, dashed) {
-      ctx.strokeStyle = color;
-      ctx.lineWidth   = 2.5;
-      ctx.lineJoin    = 'round';
-      if (dashed) ctx.setLineDash([5, 4]); else ctx.setLineDash([]);
-      ctx.beginPath();
-      data.forEach((v, i) => {
-        const x = xPos(i), y = yPos(v);
-        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-      });
-      ctx.stroke();
-      ctx.setLineDash([]);
-    }
-
-    // Fill area under 9sig line
-    ctx.beginPath();
-    CHART_DATA.sig9.forEach((v, i) => {
-      const x = xPos(i), y = yPos(v);
-      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
-    });
-    ctx.lineTo(xPos(n-1), pad.top + ch);
-    ctx.lineTo(xPos(0),   pad.top + ch);
-    ctx.closePath();
-    const grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + ch);
-    grad.addColorStop(0,   'rgba(0,114,163,0.15)');
-    grad.addColorStop(1,   'rgba(0,114,163,0.01)');
-    ctx.fillStyle = grad;
-    ctx.fill();
-
-    drawLine(CHART_DATA.bnh,  '#0a7a4a', true);
-    drawLine(CHART_DATA.sig9, '#0072a3', false);
-
-    // Dots at start and end for 9sig
-    [[0, CHART_DATA.sig9[0]], [n-1, CHART_DATA.sig9[n-1]]].forEach(([i, v]) => {
-      ctx.beginPath();
-      ctx.arc(xPos(i), yPos(v), 5, 0, Math.PI * 2);
-      ctx.fillStyle = '#0072a3'; ctx.fill();
-      ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
-    });
-
-    // X-axis labels (every 4th)
-    ctx.fillStyle = '#6b7590';
-    ctx.font = '9px "JetBrains Mono", monospace';
-    ctx.textAlign = 'center';
-    CHART_DATA.labels.forEach((lbl, i) => {
-      if (i % 4 === 0 || i === n - 1) {
-        ctx.fillText(lbl, xPos(i), H - pad.bottom + 18);
-      }
-    });
-
-    // Highlight 2022 crash zone
-    const i22s = 24, i22e = 27;
-    ctx.fillStyle = 'rgba(192,57,43,0.05)';
-    ctx.fillRect(xPos(i22s), pad.top, xPos(i22e) - xPos(i22s), ch);
-    ctx.fillStyle = 'rgba(192,57,43,0.45)';
-    ctx.font = '9px "JetBrains Mono", monospace';
-    ctx.textAlign = 'center';
-    ctx.fillText('2022 crash', (xPos(i22s)+xPos(i22e))/2, pad.top + 12);
-  }
-
-  // Draw after fonts load
-  if (document.fonts) {
-    document.fonts.ready.then(drawChart);
-  } else {
-    window.addEventListener('load', drawChart);
-  }
-  window.addEventListener('resize', () => { clearTimeout(window._rct); window._rct = setTimeout(drawChart, 120); });
 </script>
 </body>
 </html>
